@@ -1,0 +1,17 @@
+{
+  "name": "@nerd-coder/viem-rx",
+  "version": "0.1.0",
+  "description": "Ethereum 🤝 RxJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test --watch"
+  },
+  "author": "Toanzzz",
+  "license": "MIT",
+  "engines": {
+    "node": "20"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.2.2"
+  }
+}
