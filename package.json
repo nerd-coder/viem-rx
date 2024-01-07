@@ -2,16 +2,29 @@
   "name": "@nerd-coder/viem-rx",
   "version": "0.1.0",
   "description": "Ethereum 🤝 RxJS",
-  "main": "index.js",
+  "packageManager": "pnpm@8.14.0",
+  "main": "./src/index.ts",
+  "exports": {
+    "default": "./src/index.ts"
+  },
   "scripts": {
     "test": "node --test --watch"
   },
   "author": "Toanzzz",
   "license": "MIT",
   "engines": {
-    "node": "20"
+    "node": "20",
+    "pnpm": "^8"
+  },
+  "peerDependencies": {
+    "viem": "^2",
+    "rxjs": "^7",
+    "@walletconnect/ethereum-provider": "^2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.2.2"
+    "@biomejs/biome": "1.4.1"
+  },
+  "dependencies": {
+    "localforage": "^1.10.0"
   }
 }
