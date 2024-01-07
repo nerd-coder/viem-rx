@@ -15,5 +15,6 @@
       "quoteStyle": "single",
       "semicolons": "asNeeded"
     }
-  }
+  },
+  "files": { "ignore": ["dist", "node_modules"] }
 }

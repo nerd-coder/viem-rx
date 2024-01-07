@@ -9,7 +9,7 @@ import {
 } from 'viem'
 import 'viem/window'
 
-import { BaseConnector } from './base.connectors'
+import { BaseConnector } from './base.connectors.ts'
 
 export class InjectedConnector extends BaseConnector {
 	#cleanup?: () => void

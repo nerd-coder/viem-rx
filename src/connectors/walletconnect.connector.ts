@@ -15,7 +15,7 @@ import Provider, {
 	type EthereumProviderOptions,
 } from '@walletconnect/ethereum-provider'
 
-import { BaseConnector } from './base.connectors'
+import { BaseConnector } from './base.connectors.ts'
 
 export class WalletConnectConnector extends BaseConnector {
 	#cleanup?: () => void

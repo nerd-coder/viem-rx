@@ -18,9 +18,7 @@ import {
 	timer,
 } from 'rxjs'
 import { type Address, getAddress } from 'viem'
-import localforage from 'localforage'
 import { bscTestnet, type Chain } from 'viem/chains'
-
 import {
 	isErrorEvent,
 	type BaseConnector,
@@ -30,10 +28,10 @@ import {
 	isAccountChangedEvent,
 	isConnectionStateEvent,
 	isDisplayQrCodeEvent,
-} from './connectors/base.connectors'
-import { InjectedConnector } from './connectors/injected.connector'
-import { notNull } from './utils/notNull'
-import { WalletConnectConnector } from './connectors/walletconnect.connector'
+} from './connectors/base.connectors.ts'
+import { InjectedConnector } from './connectors/injected.connector.ts'
+import { notNull } from './utils/notNull.ts'
+import { WalletConnectConnector } from './connectors/walletconnect.connector.ts'
 import {
 	OPTIONAL_EVENTS,
 	OPTIONAL_METHODS,
@@ -193,14 +191,12 @@ export class ViemRxStore {
 			throw e
 		} finally {
 			if (!this.#state.error.value)
-				await localforage.setItem(VIEM_RX_KEY_LASTCONNECTION, kind)
+				localStorage.setItem(VIEM_RX_KEY_LASTCONNECTION, kind)
 		}
 	}
 	async resume() {
 		try {
-			const connectionType = await localforage.getItem(
-				VIEM_RX_KEY_LASTCONNECTION,
-			)
+			const connectionType = localStorage.getItem(VIEM_RX_KEY_LASTCONNECTION)
 			if (typeof connectionType !== 'string') return
 			console.log('🤖 Resuming...', connectionType)
 
@@ -232,7 +228,7 @@ export class ViemRxStore {
 		this.#state.account.next(undefined)
 		this.#state.error.next(undefined)
 		await this.#state.connector.value?.disconnect()
-		localforage.removeItem(VIEM_RX_KEY_LASTCONNECTION)
+		localStorage.removeItem(VIEM_RX_KEY_LASTCONNECTION)
 	}
 	clearError() {
 		this.#state.error.next(undefined)
