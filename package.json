@@ -1,26 +1,17 @@
 {
 	"name": "@nerd-coder/viem-rx",
 	"license": "MIT",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Ethereum 🤝 RxJS",
 	"packageManager": "pnpm@9.5.0",
-	"main": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
-	"exports": {
-		"default": "./dist/index.mjs",
-		"types": "./dist/index.d.ts"
-	},
 	"publishConfig": {
 		"access": "public"
 	},
-	"files": ["dist"],
 	"repository": "github:nerd-coder/viem-rx",
 	"scripts": {
-		"test": "node --test --watch",
-		"prepublishOnly": "CI=true rollup -c",
-		"build": "rollup -c"
+		"test": "node --test --watch"
 	},
-	"author": "Toanzzz",
+	"author": "NerdCoder",
 	"engines": {
 		"pnpm": "^9.5.0"
 	},
@@ -35,14 +26,6 @@
 		"viem": "^2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.2",
-		"@rollup/plugin-swc": "^0.4.0",
-		"@rollup/plugin-terser": "^0.4.4",
-		"@rollup/plugin-typescript": "^11.1.6",
-		"@swc/cli": "0.4.1-nightly.20240914",
-		"@swc/core": "^1.7.26",
-		"rollup": "^4.22.0",
-		"tslib": "^2.7.0",
-		"typescript": "^5.6.2"
+		"@biomejs/biome": "^1.9.2"
 	}
 }
