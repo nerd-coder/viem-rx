@@ -37,7 +37,7 @@ import {
 	OPTIONAL_METHODS,
 } from '@walletconnect/ethereum-provider'
 
-const VIEM_RX_KEY_LASTCONNECTION = 'VIEM_RX_KEY_LASTCONNECTION'
+const VIEM_RX_KEY_LAST_CONNECTION = 'VIEM_RX_KEY_LAST_CONNECTION'
 
 interface IViemRxStoreOptions {
 	walletconnectProjectId: string
@@ -54,11 +54,18 @@ export class ViemRxStore {
 		watchBalance: new Subject<boolean>(),
 	}
 	#tapLog = <T>(msg: string) =>
-		tap<T>(a => this.#options.debug && console.log('🤖 RXJS:', msg, a))
+		tap<T>(a => this.options.debug && console.log('🤖 RXJS:', msg, a))
 	#subscription = new Subscription()
-	#options: IViemRxStoreOptions
 
-	public readonly subjects = {
+	public readonly subjects: {
+		account: BehaviorSubject<Address | undefined>
+		error: BehaviorSubject<Error | undefined>
+		events: Subject<ConnectorEvent>
+		balance: BehaviorSubject<bigint>
+		client: BehaviorSubject<CombinedClient | undefined>
+		connectionState: BehaviorSubject<ConnectionState>
+		displayUri: BehaviorSubject<string | undefined>
+	} = {
 		account: new BehaviorSubject<Address | undefined>(undefined),
 		error: new BehaviorSubject<Error | undefined>(undefined),
 		events: new Subject<ConnectorEvent>(),
@@ -74,8 +81,7 @@ export class ViemRxStore {
 		this.#state.watchBalance.next(flag)
 	}
 
-	constructor(options: IViemRxStoreOptions) {
-		this.#options = options
+	constructor(private options: IViemRxStoreOptions) {
 		// Connect the subjects
 		const eventsObs = this.#state.connector.pipe(
 			filter(notNull),
@@ -167,7 +173,9 @@ export class ViemRxStore {
 		this.#subscription.add(displayUriObs.subscribe(this.subjects.displayUri))
 	}
 
-	async connect(kind: 'metamask' | 'walletConnect') {
+	async connect(
+		kind: 'metamask' | 'walletConnect',
+	): Promise<readonly [Address | undefined, CombinedClient]> {
 		try {
 			this.#state.error.next(undefined)
 			switch (kind) {
@@ -191,14 +199,16 @@ export class ViemRxStore {
 			throw e
 		} finally {
 			if (!this.#state.error.value)
-				localStorage.setItem(VIEM_RX_KEY_LASTCONNECTION, kind)
+				localStorage.setItem(VIEM_RX_KEY_LAST_CONNECTION, kind)
 		}
 	}
-	async resume() {
+	async resume(): Promise<
+		readonly [Address | undefined, CombinedClient] | undefined
+	> {
 		try {
-			const connectionType = localStorage.getItem(VIEM_RX_KEY_LASTCONNECTION)
+			const connectionType = localStorage.getItem(VIEM_RX_KEY_LAST_CONNECTION)
 			if (typeof connectionType !== 'string') return
-			console.log('🤖 Resuming...', connectionType)
+			console.log(' Resuming...', connectionType)
 
 			switch (connectionType) {
 				case 'metamask': {
@@ -206,7 +216,7 @@ export class ViemRxStore {
 					const [address, client] = await connector.resume()
 					if (!address) return
 					this.#state.account.next(getAddress(address))
-					console.log('🤖 Resume succeeded, account:', address)
+					console.log(' Resume succeeded, account:', address)
 					return [address, client] as const
 				}
 				case 'walletConnect': {
@@ -215,7 +225,7 @@ export class ViemRxStore {
 					if (!resumed) return
 					const [address, client] = resumed
 					this.#state.account.next(address ? getAddress(address) : undefined)
-					console.log('🤖 Resume succeeded, account:', address)
+					console.log(' Resume succeeded, account:', address)
 					return [address, client] as const
 				}
 			}
@@ -224,11 +234,11 @@ export class ViemRxStore {
 			/* Ignore errors */
 		}
 	}
-	async disconnect() {
+	async disconnect(): Promise<void> {
 		this.#state.account.next(undefined)
 		this.#state.error.next(undefined)
 		await this.#state.connector.value?.disconnect()
-		localStorage.removeItem(VIEM_RX_KEY_LASTCONNECTION)
+		localStorage.removeItem(VIEM_RX_KEY_LAST_CONNECTION)
 	}
 	clearError() {
 		this.#state.error.next(undefined)
@@ -254,15 +264,15 @@ export class ViemRxStore {
 				case 'walletConnect': {
 					connector = await WalletConnectConnector.init(
 						{
-							projectId: this.#options.walletconnectProjectId,
+							projectId: this.options.walletconnectProjectId,
 							showQrModal: false,
 							chains: [chain.id],
 							optionalMethods: OPTIONAL_METHODS,
 							optionalEvents: OPTIONAL_EVENTS,
 							rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
 							metadata: {
-								name: this.#options.title,
-								description: this.#options.title,
+								name: this.options.title,
+								description: this.options.title,
 								icons: [
 									new URL('static/android-chrome-192x192.png', location.origin)
 										.href,
