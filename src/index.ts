@@ -77,7 +77,7 @@ export class ViemRxStore {
 	public pollingInterval = 4000
 	public throttlingDuration = 4000
 
-	watchBalance(flag: boolean) {
+	watchBalance(flag: boolean): void {
 		this.#state.watchBalance.next(flag)
 	}
 
@@ -122,17 +122,17 @@ export class ViemRxStore {
 				!client || !account
 					? of(0n)
 					: watch
-					  ? timer(0, this.pollingInterval).pipe(
+						? timer(0, this.pollingInterval).pipe(
 								this.#tapLog('Watching balance...'),
 								switchMap(() => from(client.getBalance({ address: account }))),
 								catchError(e => {
 									console.warn('Fetch balance failed', e)
 									return of(0n)
 								}),
-						  )
-					  : from(client.getBalance({ address: account })).pipe(
+							)
+						: from(client.getBalance({ address: account })).pipe(
 								this.#tapLog('Fetching balance...'),
-						  ),
+							),
 			),
 			distinctUntilChanged(),
 			this.#tapLog('Balance changed'),
@@ -240,10 +240,10 @@ export class ViemRxStore {
 		await this.#state.connector.value?.disconnect()
 		localStorage.removeItem(VIEM_RX_KEY_LAST_CONNECTION)
 	}
-	clearError() {
+	clearError(): void {
 		this.#state.error.next(undefined)
 	}
-	destroy() {
+	destroy(): void {
 		this.#subscription.unsubscribe()
 		for (const subject of Object.values(this.#state)) subject.complete()
 		for (const subject of Object.values(this.subjects)) subject.complete()
@@ -261,29 +261,32 @@ export class ViemRxStore {
 				case 'metamask':
 					connector = await InjectedConnector.init(bscTestnet)
 					break
-				case 'walletConnect': {
-					connector = await WalletConnectConnector.init(
-						{
-							projectId: this.options.walletconnectProjectId,
-							showQrModal: false,
-							chains: [chain.id],
-							optionalMethods: OPTIONAL_METHODS,
-							optionalEvents: OPTIONAL_EVENTS,
-							rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
-							metadata: {
-								name: this.options.title,
-								description: this.options.title,
-								icons: [
-									new URL('static/android-chrome-192x192.png', location.origin)
-										.href,
-								],
-								url: location.origin,
+				case 'walletConnect':
+					{
+						connector = await WalletConnectConnector.init(
+							{
+								projectId: this.options.walletconnectProjectId,
+								showQrModal: false,
+								chains: [chain.id],
+								optionalMethods: OPTIONAL_METHODS,
+								optionalEvents: OPTIONAL_EVENTS,
+								rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
+								metadata: {
+									name: this.options.title,
+									description: this.options.title,
+									icons: [
+										new URL(
+											'static/android-chrome-192x192.png',
+											location.origin,
+										).href,
+									],
+									url: location.origin,
+								},
 							},
-						},
-						chain,
-					)
-				}
-				break
+							chain,
+						)
+					}
+					break
 			}
 		}
 		this.#state.connector.next(connector)

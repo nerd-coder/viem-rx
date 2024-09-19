@@ -1,20 +1,20 @@
 import {
 	BaseError,
+	type Chain,
+	type EIP1193Provider,
 	createClient,
 	custom,
 	publicActions,
-	type Chain,
-	type EIP1193Provider,
 	walletActions,
 } from 'viem'
 import 'viem/window'
 
-import { BaseConnector } from './base.connectors.ts'
+import { BaseConnector, type CombinedClient } from './base.connectors.ts'
 
 export class InjectedConnector extends BaseConnector {
 	#cleanup?: () => void
 
-	static async init(chain: Chain) {
+	static async init(chain: Chain): Promise<InjectedConnector> {
 		const self = new InjectedConnector('metamask')
 		const eth = typeof window !== 'undefined' ? window.ethereum : undefined
 		if (!eth) throw new Error('Metamask not found')
@@ -28,7 +28,7 @@ export class InjectedConnector extends BaseConnector {
 		return self
 	}
 
-	async connect() {
+	async connect(): Promise<readonly [`0x${string}`, CombinedClient]> {
 		this.emitState('connecting')
 		const client = this.client.value
 		try {
@@ -43,14 +43,14 @@ export class InjectedConnector extends BaseConnector {
 			throw e
 		}
 	}
-	async disconnect() {
+	async disconnect(): Promise<void> {
 		this.emitState('disconnected')
 	}
-	async destroy() {
+	async destroy(): Promise<void> {
 		super.destroy()
 		this.#cleanup?.()
 	}
-	async resume() {
+	async resume(): Promise<readonly [`0x${string}`, CombinedClient]> {
 		this.emitState('connecting')
 		try {
 			const client = this.client.value

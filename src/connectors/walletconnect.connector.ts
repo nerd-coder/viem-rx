@@ -1,21 +1,22 @@
+import type Provider from '@walletconnect/ethereum-provider'
 import {
-	BaseError,
-	createClient,
-	custom,
-	isAddress,
-	publicActions,
-	type Chain,
-	walletActions,
-	ProviderRpcError,
-	getAddress,
-} from 'viem'
-import { bscTestnet } from 'viem/chains'
-import Provider, {
 	EthereumProvider,
 	type EthereumProviderOptions,
 } from '@walletconnect/ethereum-provider'
+import {
+	BaseError,
+	type Chain,
+	ProviderRpcError,
+	createClient,
+	custom,
+	getAddress,
+	isAddress,
+	publicActions,
+	walletActions,
+} from 'viem'
+import { bscTestnet } from 'viem/chains'
 
-import { BaseConnector } from './base.connectors.ts'
+import { BaseConnector, type CombinedClient } from './base.connectors.ts'
 
 export class WalletConnectConnector extends BaseConnector {
 	#cleanup?: () => void
@@ -24,7 +25,7 @@ export class WalletConnectConnector extends BaseConnector {
 	static async init(
 		config: EthereumProviderOptions,
 		chain: Chain = bscTestnet,
-	) {
+	): Promise<WalletConnectConnector> {
 		const self = new WalletConnectConnector('walletConnect')
 		const eth = await EthereumProvider.init(config)
 		const client = createClient({ chain: chain, transport: custom(eth) })
@@ -37,7 +38,7 @@ export class WalletConnectConnector extends BaseConnector {
 		return self
 	}
 
-	async connect() {
+	async connect(): Promise<readonly [`0x${string}`, CombinedClient]> {
 		if (!this.#provider) throw new Error('Uninitialized!')
 		this.emitState('connecting')
 		try {
@@ -55,15 +56,15 @@ export class WalletConnectConnector extends BaseConnector {
 			throw e
 		}
 	}
-	async disconnect() {
+	async disconnect(): Promise<void> {
 		this.emitState('disconnected')
 		await this.#provider?.disconnect()
 	}
-	async destroy() {
+	async destroy(): Promise<void> {
 		super.destroy()
 		this.#cleanup?.()
 	}
-	async resume() {
+	async resume(): Promise<readonly [`0x${string}`, CombinedClient]> {
 		this.emitState('connecting')
 		try {
 			const client = this.client.value

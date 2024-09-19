@@ -1,4 +1,4 @@
-import { Subject, type Observable, BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, type Observable, Subject } from 'rxjs'
 import type {
 	Address,
 	Chain,
@@ -86,9 +86,8 @@ export abstract class BaseConnector {
 		this.kind = kind
 	}
 
-	public readonly client = new BehaviorSubject<CombinedClient | undefined>(
-		undefined,
-	)
+	public readonly client: BehaviorSubject<CombinedClient | undefined> =
+		new BehaviorSubject<CombinedClient | undefined>(undefined)
 	public readonly events: Observable<ConnectorEvent> = this.#emitter
 
 	abstract connect(): Promise<readonly [Address, CombinedClient]>
@@ -98,13 +97,15 @@ export abstract class BaseConnector {
 		this.#emitter.complete()
 		this.client.complete()
 	}
-	protected genEventHandler<TType extends ConnectorEvent['type']>(type: TType) {
-		type TData<T = ConnectorEvent> = T extends { type: TType; data: infer Tx }
-			? Tx
-			: never
-		return (data: TData) => this.#emitter.next({ type, data } as ConnectorEvent)
+	protected genEventHandler<
+		T extends ConnectorEvent['type'],
+		E extends ConnectorEvent,
+	>(type: T): (data: E extends { type: T; data: infer D } ? D : never) => void {
+		return data => this.#emitter.next({ type, data } as ConnectorEvent)
 	}
 
-	protected emitError = this.genEventHandler('error')
-	protected emitState = this.genEventHandler('connectionStateChanged')
+	protected emitError: (data: Error) => void = this.genEventHandler('error')
+	protected emitState: (data: ConnectionState) => void = this.genEventHandler(
+		'connectionStateChanged',
+	)
 }
