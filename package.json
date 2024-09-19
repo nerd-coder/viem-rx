@@ -24,6 +24,11 @@
 	"engines": {
 		"pnpm": "^9.5.0"
 	},
+	"dependencies": {
+		"@walletconnect/ethereum-provider": "^2",
+		"rxjs": "^7",
+		"viem": "^2"
+	},
 	"peerDependencies": {
 		"@walletconnect/ethereum-provider": "^2",
 		"rxjs": "^7",
