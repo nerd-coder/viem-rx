@@ -12,5 +12,15 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - run: npx jsr publish
+      - name: 🛎 Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: 🏗 Setup PNPM
+        uses: pnpm/action-setup@v4
+      - name: 🏗 Setup NodeJS
+        uses: actions/setup-node@v4
+        with: { node-version-file: .node-version, cache: pnpm }
+      - name: 📦 Install dependencies
+        run: pnpm install
+      - name: 🚀 Publish
+        run: npx jsr publish
