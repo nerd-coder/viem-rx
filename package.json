@@ -39,17 +39,22 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.2",
 		"@release-it/bumper": "^6.0.1",
-		"@release-it/keep-a-changelog": "^5.0.0",
+		"@release-it/conventional-changelog": "^8.0.2",
 		"jsr": "*",
 		"lefthook": "^1.7.15",
 		"pkgroll": "^2.5.0",
 		"release-it": "*"
 	},
 	"release-it": {
-		"npm": { "publish": false },
+		"npm": {
+			"publish": false
+		},
 		"plugins": {
-			"@release-it/keep-a-changelog": {
-				"filename": "CHANGELOG.md"
+			"@release-it/conventional-changelog": {
+				"preset": {
+					"name": "angular"
+				},
+				"infile": "CHANGELOG.md"
 			},
 			"@release-it/bumper": {
 				"in": "jsr.json",
