@@ -6,5 +6,8 @@
 	"[javascript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"cSpell.words": ["Viem", "walletconnect"]
+	"cSpell.words": ["Viem", "walletconnect"],
+	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+	}
 }

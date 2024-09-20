@@ -80,15 +80,13 @@ export type CombinedClient = PublicClient<Transport, Chain> &
 
 export abstract class BaseConnector {
 	#emitter = new Subject<ConnectorEvent>()
-	readonly kind: 'metamask' | 'walletConnect'
 
-	protected constructor(kind: 'metamask' | 'walletConnect') {
-		this.kind = kind
-	}
+	protected constructor(public readonly kind: 'metamask' | 'walletConnect') {}
 
 	public readonly client: BehaviorSubject<CombinedClient | undefined> =
 		new BehaviorSubject<CombinedClient | undefined>(undefined)
-	public readonly events: Observable<ConnectorEvent> = this.#emitter
+	public readonly events: Observable<ConnectorEvent> =
+		this.#emitter.asObservable()
 
 	abstract connect(): Promise<readonly [Address, CombinedClient]>
 	abstract disconnect(): Promise<void>

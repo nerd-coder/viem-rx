@@ -1,4 +1,5 @@
 import {
+	type Address,
 	BaseError,
 	type Chain,
 	type EIP1193Provider,
@@ -28,7 +29,7 @@ export class InjectedConnector extends BaseConnector {
 		return self
 	}
 
-	async connect(): Promise<readonly [`0x${string}`, CombinedClient]> {
+	async connect(): Promise<readonly [Address, CombinedClient]> {
 		this.emitState('connecting')
 		const client = this.client.value
 		try {
@@ -50,7 +51,7 @@ export class InjectedConnector extends BaseConnector {
 		super.destroy()
 		this.#cleanup?.()
 	}
-	async resume(): Promise<readonly [`0x${string}`, CombinedClient]> {
+	async resume(): Promise<readonly [Address, CombinedClient]> {
 		this.emitState('connecting')
 		try {
 			const client = this.client.value

@@ -4,6 +4,7 @@ import {
 	type EthereumProviderOptions,
 } from '@walletconnect/ethereum-provider'
 import {
+	type Address,
 	BaseError,
 	type Chain,
 	ProviderRpcError,
@@ -38,7 +39,7 @@ export class WalletConnectConnector extends BaseConnector {
 		return self
 	}
 
-	async connect(): Promise<readonly [`0x${string}`, CombinedClient]> {
+	async connect(): Promise<readonly [Address, CombinedClient]> {
 		if (!this.#provider) throw new Error('Uninitialized!')
 		this.emitState('connecting')
 		try {
@@ -64,7 +65,7 @@ export class WalletConnectConnector extends BaseConnector {
 		super.destroy()
 		this.#cleanup?.()
 	}
-	async resume(): Promise<readonly [`0x${string}`, CombinedClient]> {
+	async resume(): Promise<readonly [Address, CombinedClient]> {
 		this.emitState('connecting')
 		try {
 			const client = this.client.value
