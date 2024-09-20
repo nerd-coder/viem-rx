@@ -4,7 +4,9 @@
 	"version": "0.1.1",
 	"description": "Ethereum 🤝 RxJS",
 	"packageManager": "pnpm@9.5.0",
-	"publishConfig": { "access": "public" },
+	"publishConfig": {
+		"access": "public"
+	},
 	"repository": "github:nerd-coder/viem-rx",
 	"author": "NerdCoder",
 	"main": "./dist/index.mjs",
@@ -21,7 +23,8 @@
 		"build": "pkgroll",
 		"release": "release-it",
 		"publish:jsr": "jsr publish",
-		"publish:npm": "npm publish"
+		"publish:npm": "npm publish",
+		"postinstall": "lefthook install"
 	},
 	"dependencies": {
 		"@walletconnect/ethereum-provider": "^2",
@@ -38,6 +41,7 @@
 		"@release-it/bumper": "^6.0.1",
 		"@release-it/keep-a-changelog": "^5.0.0",
 		"jsr": "*",
+		"lefthook": "^1.7.15",
 		"pkgroll": "^2.5.0",
 		"release-it": "*"
 	},
