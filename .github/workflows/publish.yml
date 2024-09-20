@@ -27,4 +27,5 @@ jobs:
       - name: 🚀 Publish to JSR
         run: pnpm publish:jsr
       - name: 🚀 Publish to NPM
-        run: pnpm publish:npm
+        uses: JS-DevTools/npm-publish@v3
+        with: { token: '${{ secrets.NPM_TOKEN }}' }
