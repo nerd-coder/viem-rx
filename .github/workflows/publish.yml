@@ -24,6 +24,8 @@ jobs:
         run: pnpm install
       - name: 💅 Lint
         run: pnpm lint
+      - name: ⛑ Build
+        run: pnpm build
       - name: 🚀 Publish to JSR
         run: pnpm publish:jsr
       - name: 🚀 Publish to NPM
