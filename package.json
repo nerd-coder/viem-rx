@@ -1,19 +1,27 @@
 {
 	"name": "@nerd-coder/viem-rx",
 	"license": "MIT",
-	"version": "0.1.2",
+	"version": "0.1.1",
 	"description": "Ethereum 🤝 RxJS",
 	"packageManager": "pnpm@9.5.0",
-	"publishConfig": {
-		"access": "public"
-	},
+	"publishConfig": { "access": "public" },
 	"repository": "github:nerd-coder/viem-rx",
-	"scripts": {
-		"test": "node --test --watch"
-	},
 	"author": "NerdCoder",
-	"engines": {
-		"pnpm": "^9.5.0"
+	"main": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"require": "./dist/index.cjs",
+		"import": "./dist/index.mjs",
+		"types": "./dist/index.d.ts"
+	},
+	"files": ["./dist/index.cjs", "./dist/index.mjs", "./dist/index.d.ts"],
+	"scripts": {
+		"test": "node --test --watch",
+		"lint": "biome ci",
+		"build": "pkgroll",
+		"release": "release-it",
+		"publish:jsr": "jsr publish",
+		"publish:npm": "npm publish"
 	},
 	"dependencies": {
 		"@walletconnect/ethereum-provider": "^2",
@@ -26,6 +34,22 @@
 		"viem": "^2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.2"
+		"@biomejs/biome": "^1.9.2",
+		"@release-it/bumper": "^6.0.1",
+		"@release-it/keep-a-changelog": "^5.0.0",
+		"jsr": "*",
+		"pkgroll": "^2.5.0",
+		"release-it": "*"
+	},
+	"release-it": {
+		"plugins": {
+			"@release-it/keep-a-changelog": {
+				"filename": "CHANGELOG.md"
+			},
+			"@release-it/bumper": {
+				"in": "jsr.json",
+				"out": "jsr.json"
+			}
+		}
 	}
 }

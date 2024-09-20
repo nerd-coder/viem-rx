@@ -1,5 +1,11 @@
 import {
+	OPTIONAL_EVENTS,
+	OPTIONAL_METHODS,
+} from '@walletconnect/ethereum-provider'
+import {
 	BehaviorSubject,
+	Subject,
+	Subscription,
 	catchError,
 	combineLatest,
 	distinctUntilChanged,
@@ -10,17 +16,14 @@ import {
 	of,
 	share,
 	startWith,
-	Subject,
-	Subscription,
 	switchMap,
 	tap,
 	throttleTime,
 	timer,
 } from 'rxjs'
 import { type Address, getAddress } from 'viem'
-import { bscTestnet, type Chain } from 'viem/chains'
+import { type Chain, bscTestnet } from 'viem/chains'
 import {
-	isErrorEvent,
 	type BaseConnector,
 	type CombinedClient,
 	type ConnectionState,
@@ -28,14 +31,11 @@ import {
 	isAccountChangedEvent,
 	isConnectionStateEvent,
 	isDisplayQrCodeEvent,
+	isErrorEvent,
 } from './connectors/base.connectors.ts'
 import { InjectedConnector } from './connectors/injected.connector.ts'
-import { notNull } from './utils/notNull.ts'
 import { WalletConnectConnector } from './connectors/walletconnect.connector.ts'
-import {
-	OPTIONAL_EVENTS,
-	OPTIONAL_METHODS,
-} from '@walletconnect/ethereum-provider'
+import { notNull } from './utils/notNull.ts'
 
 const VIEM_RX_KEY_LAST_CONNECTION = 'VIEM_RX_KEY_LAST_CONNECTION'
 

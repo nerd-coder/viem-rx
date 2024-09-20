@@ -22,5 +22,9 @@ jobs:
         with: { node-version: lts/*, cache: pnpm }
       - name: 📦 Install dependencies
         run: pnpm install
-      - name: 🚀 Publish
-        run: npx jsr publish
+      - name: 💅 Lint
+        run: pnpm lint
+      - name: 🚀 Publish to JSR
+        run: pnpm publish:jsr
+      - name: 🚀 Publish to NPM
+        run: pnpm publish:npm
